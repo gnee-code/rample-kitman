@@ -32,8 +32,8 @@ class kit:
     def AddStereoSample(self, sample, slot):
         sample_left = sample[0]
         sample_right = sample[1]
-        self.layout[slot].append(sample[0])
-        self.layout[slot+1].append(sample[1])
+        self.layout[slot].append(sample_left)
+        self.layout[slot+1].append(sample_right)
 
     def RemoveSample(self, slot, index):
         self.layout[slot].pop(index)
