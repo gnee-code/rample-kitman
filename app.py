@@ -17,8 +17,6 @@
 # Import packages
 from utilities import *
 import streamlit as st
-import tkinter as tk
-from tkinter import filedialog
 import os
 
 st.set_page_config(page_icon="📥",page_title="rample-kitman")
