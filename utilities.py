@@ -57,12 +57,15 @@ class Slot:
         self.number = number
         self.samples = []
         self.index = None
+        self.names = []
 
     def AddSample(self,filename):
         self.samples.append(Sample(filename))
+        self.names.append(filename)
 
     def RemoveSample(self,index):
         self.samples.pop(index)
+        self.names.pop(index)
 
 
 # Define a Kit class consisting of 4 Slots
@@ -79,7 +82,8 @@ class Kit:
         self.slots = [Slot(1),Slot(2),Slot(3),Slot(4)]
 
     def AddSample(self,slot,filename):
-        self.slots[slot-1].AddSample(filename)
+        for f in filename:
+            self.slots[slot-1].AddSample(f)
 
     def RemoveSample(self,slot,index):
         self.slots[slot-1].RemoveSample(index)
