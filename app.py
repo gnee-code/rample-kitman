@@ -26,19 +26,18 @@ def main():
     st.markdown("A web app designed to generate 'kits' for the Squarp Rample Eurorack module.")
     st.markdown("Copyright (C) 2022 George N")
 
-    root = tk.Tk()
+    # root = tk.Tk()
     # root.withdraw()
-    root.wm_attributes('-topmost', 1)
+    # root.wm_attributes('-topmost', 1)
     st.write('Please select the location of your Squarp Rample-formatted SD card:')
     dirname = st.text_input('SD card location:')
     if os.path.exists(dirname):
         dir_exists = True
     else:
         dir_exists = False
-        st.error('Please select a valid directory')
+        st.info('Please select a valid directory')
 
     if dir_exists:
-
         lcol,ncol = st.columns(2)
         with lcol:
             letter_bank = st.selectbox(
@@ -53,46 +52,49 @@ def main():
 
         # Create a kit object with these created values
         kit = Kit(letter_bank,number_bank)
-
         st.markdown ("Upload to Kit {}...".format(kit.name))
 
-        # Slot 1 file upload
-        f1 = st.file_uploader("Slot 1:",type=VALID_FORMATS,accept_multiple_files=True)
-        if f1 is not None:
-            kit.AddSample(1,[f.name for f in f1])
-            st.success("Files loaded in Slot 1: {}".format(" ".join(kit.slots[0].names)))
+        with st.form("Kit details", clear_on_submit=True):
 
-        # Slot 2 file upload
-        f2 = st.file_uploader("Slot 2:",type=VALID_FORMATS,accept_multiple_files=True)
-        if f2 is not None:
-            kit.AddSample(2,[f.name for f in f2])
-            st.success("Files loaded in Slot 2: {}".format(" ".join(kit.slots[1].names)))
 
-        # Slot 3 file upload
-        f3 = st.file_uploader("Slot 3:",type=VALID_FORMATS,accept_multiple_files=True)
-        if f3 is not None:
-            kit.AddSample(3,[f.name for f in f3])
-            st.success("Files loaded in Slot 3: {}".format(" ".join(kit.slots[2].names)))
+            # Slot 1 file upload
+            f1 = st.file_uploader("Slot 1:",type=VALID_FORMATS,accept_multiple_files=True)
+            if f1 is not None:
+                kit.AddSample(1,[Sample(f,type="BytesIO") for f in f1])
+                st.success("Files loaded in Slot 1: {}".format(" ".join(kit.slots[0].names)))
 
-        # Slot 4 file upload
-        f4 = st.file_uploader("Slot 4:",type=VALID_FORMATS,accept_multiple_files=True)
-        if f4 is not None:
-            kit.AddSample(4,[f.name for f in f4])
-            st.success("Files loaded in Slot 4: {}".format(" ".join(kit.slots[3].names)))
+            # Slot 2 file upload
+            f2 = st.file_uploader("Slot 2:",type=VALID_FORMATS,accept_multiple_files=True)
+            if f2 is not None:
+                kit.AddSample(2,[Sample(f,type="BytesIO") for f in f2])
+                st.success("Files loaded in Slot 2: {}".format(" ".join(kit.slots[1].names)))
 
-        # Save the kit
-        st.markdown ("Save Kit {}...".format(kit.name))
-        savekit = st.button("Save Kit")
-        if savekit is not None:
-            SaveKit(kit,dirname)
-            st.success("Kit saved")
+            # Slot 3 file upload
+            f3 = st.file_uploader("Slot 3:",type=VALID_FORMATS,accept_multiple_files=True)
+            if f3 is not None:
+                kit.AddSample(3,[Sample(f,type="BytesIO") for f in f3])
+                st.success("Files loaded in Slot 3: {}".format(" ".join(kit.slots[2].names)))
 
-    
-        # Clear the kit
-        st.markdown ("Clear Kit {}...".format(kit.name))
-        if st.button("Clear Kit"):
-            kit.ClearKit()
-            st.success("Kit cleared")
+            # Slot 4 file upload
+            f4 = st.file_uploader("Slot 4:",type=VALID_FORMATS,accept_multiple_files=True)
+            if f4 is not None:
+                kit.AddSample(4,[Sample(f,type="BytesIO") for f in f4])
+                st.success("Files loaded in Slot 4: {}".format(" ".join(kit.slots[3].names)))
+
+            # # Save the kit
+            # st.markdown ("Save Kit {}...".format(kit.name))
+            # if st.button("Save Kit"):
+            #     SaveKit(kit,dirname)
+            #     st.success("Kit saved")
+
+            # Save and clear the kit and reset the app
+            st.markdown ("Save Kit and Reset {}...".format(kit.name))
+            clear = st.form_submit_button("Finish Kit")
+            if clear:
+                SaveKit(kit,dirname)
+                kit.ClearKit()
+                st.success("Kit Finished.")
+
 
 
 main()

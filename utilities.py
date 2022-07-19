@@ -29,20 +29,31 @@ SAMPLE_RATE = 44100
 # Constructor should convert the file to mono and resample to
 # a sample rate of 44100 Hz and a bit depth of 16 bits.
 class Sample:
-    def __init__(self,filename):
+    def __init__(self,filename,data=None,type=None):
 
-        # Store the filename
-        self.filename = filename
+        if type == "BytesIO":
+            # Load the data from a BytesIO object
+            self.data = soundfile.read(filename,dtype="int16")[0]
+            self.name = filename.name
+            self.length = len(self.data)
+            self.sr = SAMPLE_RATE
 
-        # Load the file to self.data using librosa.load
-        self.data, self.sr = librosa.load(filename, mono=True, sr=SAMPLE_RATE)
+        else:
+            if data is None:
+                # Store the filename
+                self.filename = filename
+                # Load the file to self.data using librosa.load
+                self.data, self.sr = librosa.load(filename, mono=True, sr=SAMPLE_RATE)
+                # Convert to 16-bit
+                self.data = self.data.astype(np.int16)
+                # Store the sample length in seconds
+                self.length = self.data.shape[0]
 
-        # Convert to 16-bit
-        self.data = self.data.astype(np.int16)
         # Store the bit depth
         self.bit_depth = 16
-        # Store the length of the sample
-        self.length = self.data.shape[0]
+
+        
+
 
 
 
@@ -59,9 +70,13 @@ class Slot:
         self.index = None
         self.names = []
 
-    def AddSample(self,filename):
+    def AddSampleByName(self,filename):
         self.samples.append(Sample(filename))
         self.names.append(filename)
+
+    def AddSample(self,sampleobj):
+        self.samples.append(sampleobj)
+        self.names.append(sampleobj.name)
 
     def RemoveSample(self,index):
         self.samples.pop(index)
@@ -116,7 +131,7 @@ def SaveKit(kit,location):
     for slot in kit.slots:
         if slot.samples != []:
             for sample in slot.samples:
-                soundfile.write(location + kit.name + "/" + str(slot.number) + "_" + str(slot.samples.index(sample)+1) + "_" + sample.filename.split("/")[-1], sample.data, sample.sample_rate, subtype="PCM_16")
+                soundfile.write(location + "/" + kit.name + "/" + str(slot.number) + "_" + str(slot.samples.index(sample)+1) + "_" + "".join(sample.name.split("/")[-1].split(".")[:-1]) + ".wav", sample.data, sample.sample_rate, subtype="PCM_16")
 
     return True
 
