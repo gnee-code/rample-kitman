@@ -122,7 +122,7 @@ class Kit:
 def SaveKit(kit,location):
     # Create the folder
     try:
-        os.mkdir(location + kit.name)
+        os.mkdir(location + "/" + kit.name)
     except FileExistsError:
         print("Kit already exists")
         return False

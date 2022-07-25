@@ -24,7 +24,6 @@ st.set_page_config(page_icon="📥",page_title="rample-kitman")
 def main():
     st.title("rample-kitman")
     st.markdown("A web app designed to generate 'kits' for the Squarp Rample Eurorack module.")
-    st.markdown("Copyright (C) 2022 George N")
 
     # root = tk.Tk()
     # root.withdraw()
@@ -94,6 +93,7 @@ def main():
                 SaveKit(kit,dirname)
                 kit.ClearKit()
                 st.success("Kit Finished.")
+    st.markdown("Copyright (C) 2022 George N")
 
 
 
